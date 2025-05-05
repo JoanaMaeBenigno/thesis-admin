@@ -26,3 +26,34 @@ export async function fetchArticles(page = 1, pageSize = 20): Promise<Articles> 
 
   return json.data || []
 }
+
+export async function postArticle(payload: string) {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
+
+  const res = await fetch(
+    `${API_URL}/article`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: payload
+    }
+  )
+  if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+}
+
+export async function deleteArticle(id: string) {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
+
+  const res = await fetch(
+    `${API_URL}/article/${id}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }
+  )
+  if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+}

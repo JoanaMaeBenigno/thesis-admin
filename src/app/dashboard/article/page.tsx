@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { fetchArticles, Article } from '@/services/articleService'; // Adjust the import path
-import AddArticleModal from '@/components/addArticleModal'; // Import the AddArticleModal component
+import { useRouter } from 'next/navigation'
+import { fetchArticles, Article, deleteArticle } from '@/services/articleService'; // Adjust the import path
+import ConfirmDeleteModal from '@/components/confirmDeleteModal';
 
 type Pagination = {
   page: number;
@@ -17,7 +17,8 @@ export default function ArticlesPage() {
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [uuidToDelete, setUuidToDelete] = useState<string | null>(null);
+  const router = useRouter()
 
   const loadArticles = async (pageNum: number) => {
     try {
@@ -40,14 +41,6 @@ export default function ArticlesPage() {
     loadArticles(page);
   }, [page]);
 
-  const handleDelete = (uuid: string) => {
-    if (confirm('Delete this article?')) {
-      fetch(`/api/admin/articles/${uuid}`, { method: 'DELETE' })
-        .then(() => setArticles(articles.filter(article => article.uuid !== uuid)))
-        .catch(() => alert('Failed to delete'));
-    }
-  };
-
   const handlePrev = () => {
     if (pagination && page > 1) setPage(page - 1);
   };
@@ -56,19 +49,30 @@ export default function ArticlesPage() {
     if (pagination && page < pagination.total_pages) setPage(page + 1);
   };
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
+  const handleAddArticle = () => {
+    router.push('/dashboard/article/add')
+  }
+
+  const handleEditArticle = (id) => {
+    alert('Feature is still not available');
+    // router.push('/dashboard/article/add')
+  }
+
+  const confirmDelete = (uuid: string) => {
+    setUuidToDelete(uuid);
   };
 
-  const handleSaveArticle = (title: string, subtitle: string, thumbnail: string) => {
-    // Here, you'd typically make an API call to save the article to the backend
-    const newArticle = {
-      uuid: Date.now().toString(),
-      title,
-      subtitle,
-      thumbnail_image: thumbnail
-    };
-    setArticles([newArticle, ...articles]);
+  const handleDelete = async () => {
+    if (!uuidToDelete) return;
+
+    try {
+      await deleteArticle(uuidToDelete);
+      setArticles(prev => prev.filter(article => article.uuid !== uuidToDelete));
+      setUuidToDelete(null);
+    } catch (error) {
+      console.error('Failed to delete', error);
+      alert('Failed to delete');
+    }
   };
 
   if (loading) return <p>Loading articles...</p>;
@@ -78,18 +82,11 @@ export default function ArticlesPage() {
       <h1 className="text-2xl font-bold mb-6">Articles</h1>
 
       <button
-        onClick={toggleModal}
+        onClick={handleAddArticle}
         className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mb-6"
       >
         Add Article
       </button>
-
-      {/* Add Article Modal */}
-      <AddArticleModal
-        isOpen={isModalOpen}
-        onClose={toggleModal}
-        onSave={handleSaveArticle}
-      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {articles.map(article => (
@@ -102,14 +99,20 @@ export default function ArticlesPage() {
             <h2 className="text-lg font-semibold">{article.title}</h2>
             <p className="text-sm text-gray-600 mb-4">{article.subtitle}</p>
             <div className="flex gap-2">
-              <Link
+              {/* <Link
                 href={`/dashboard/articles/${article.uuid}/edit`}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
               >
                 Edit
-              </Link>
+              </Link> */}
               <button
-                onClick={() => handleDelete(article.uuid)}
+                onClick={() => handleEditArticle(article.uuid)}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => confirmDelete(article.uuid)}
                 className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
               >
                 Delete
@@ -141,6 +144,12 @@ export default function ArticlesPage() {
           </button>
         </div>
       )}
+
+      <ConfirmDeleteModal
+        isOpen={!!uuidToDelete}
+        onClose={() => setUuidToDelete(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

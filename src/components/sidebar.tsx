@@ -1,14 +1,12 @@
 'use client';
 
 import Link from "next/link";
-// import { usePathname } from "next/navigation";
-// import clsx from "clsx";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/dashboard/article", label: "Article" },
-  { href: "/dashboard/check_learning", label: "Check learning" }
-];
+  { href: "/dashboard/category", label: "Category" }
+]
 
 export default function Sidebar() {
   return (
@@ -29,5 +27,5 @@ export default function Sidebar() {
         <Link href="/logout" className="block hover:bg-indigo-600 p-2 rounded">Logout</Link>
       </div>
     </aside>
-  );
+  )
 }
