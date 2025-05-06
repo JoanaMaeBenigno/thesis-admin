@@ -53,8 +53,9 @@ export default function ArticlesPage() {
     router.push('/dashboard/article/add')
   }
 
-  const handleEditArticle = () => {
+  const handleEditArticle = (id: string) => {
     alert('Feature is still not available');
+    console.log(id)
     // router.push('/dashboard/article/add')
   }
 
