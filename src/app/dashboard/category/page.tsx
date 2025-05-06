@@ -3,7 +3,8 @@
 import { SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Table, { Column } from "@/components/table";
-import { Category, fetchCategories } from "@/services/categoryService"; // adjust path as needed
+import { Category, deleteCategory, fetchCategories } from "@/services/categoryService"; // adjust path as needed
+import ConfirmDeleteModal from "@/components/confirmDeleteModal";
 
 const columns: Column<Category>[] = [
   { header: "Name", accessor: "name" },
@@ -15,6 +16,7 @@ export default function CheckLearning() {
   const [data, setData] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [idToDelete, setIdToDelete] = useState<string | null>(null);
 
   const router = useRouter()
 
@@ -30,9 +32,21 @@ export default function CheckLearning() {
     // Add logic here
   };
 
-  const handleDelete = (category: Category) => {
-    console.log("Delete:", category);
-    // Add logic here
+  const confirmDelete = (id: string) => {
+    setIdToDelete(id);
+  };
+
+  const handleDelete = async () => {
+    if (!idToDelete) return;
+
+    try {
+      await deleteCategory(idToDelete);
+      setData(prev => prev.filter(category => category.id !== idToDelete));
+      setIdToDelete(null);
+    } catch (error) {
+      console.error('Failed to delete', error);
+      alert('Failed to delete');
+    }
   };
 
   const handleAddNewCategory = () => {
@@ -63,9 +77,16 @@ export default function CheckLearning() {
         renderActions={(row) => (
           <div className="flex gap-2">
             <button onClick={() => handleEdit(row)} className="text-blue-600 hover:underline">Edit</button>
-            <button onClick={() => handleDelete(row)} className="text-red-600 hover:underline">Delete</button>
+            {/* <button onClick={() => handleDelete(row)} className="text-red-600 hover:underline">Delete</button> */}
+            <button onClick={() => confirmDelete(row.id)} className="text-red-600 hover:underline">Delete</button>
           </div>
         )}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={!!idToDelete}
+        onClose={() => setIdToDelete(null)}
+        onConfirm={() => handleDelete()}
       />
     </div>
   );

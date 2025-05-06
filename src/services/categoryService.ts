@@ -30,3 +30,18 @@ export async function postCategory(payload: string) {
   )
   if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 }
+
+export async function deleteCategory(id: string) {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
+
+  const res = await fetch(
+    `${API_URL}/check_learning/category/${id}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    }
+  )
+  if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+}
