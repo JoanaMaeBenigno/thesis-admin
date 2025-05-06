@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { postCategory } from "@/services/categoryService";
 
-export default function ArticlesPage() {
+export default function AddCategoryPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ export default function ArticlesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Category</h1>
+      <h1 className="text-2xl font-bold mb-6">Check Learning - Category</h1>
       <section>
         <form
           onSubmit={handleSubmit}
@@ -77,7 +77,7 @@ export default function ArticlesPage() {
           <div className="flex justify-between">
             <button
               type="button"
-              onClick={() => router.push("/dashboard/category")}
+              onClick={() => router.push("/dashboard/check_learning")}
               className="bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400"
             >
               Cancel
