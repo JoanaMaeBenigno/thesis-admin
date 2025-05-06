@@ -5,7 +5,7 @@ import Link from "next/link";
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/dashboard/article", label: "Article" },
-  { href: "/dashboard/category", label: "Category" }
+  { href: "/dashboard/check_learning", label: "Check Learning" }
 ]
 
 export default function Sidebar() {
