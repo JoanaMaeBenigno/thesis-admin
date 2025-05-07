@@ -3,19 +3,15 @@
 import { SetStateAction, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Category, fetchCategory } from "@/services/categoryService";
-import { postQuestion } from "@/services/questionService";
+// import { postQuestion } from "@/services/questionService";
+import { postSurveyQuestion } from "@/services/surveyService";
 
-export default function AddCheckLearningExamPage() {
+export default function AddCheckLearningSurveyPage() {
   const { category_id } = useParams<{ category_id: string }>();
 
   const [category, setCategory] = useState<Category>();
 
   const [question, setQuestion] = useState('');
-  const [choice1, setChoice1] = useState('');
-  const [choice2, setChoice2] = useState('');
-  const [choice3, setChoice3] = useState('');
-  const [choice4, setChoice4] = useState('');
-  const [correctOption, setCorrectOption] = useState('choice-a');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,9 +20,9 @@ export default function AddCheckLearningExamPage() {
   const [modalMessage, setModalMessage] = useState('');
   const [modalSuccess, setModalSuccess] = useState(false);
 
-  const router = useRouter();
-
   const returnPoint = `/dashboard/check_learning/survey/${category_id}`
+
+  const router = useRouter();
 
   useEffect(() => {
     fetchCategory(category_id)
@@ -42,26 +38,19 @@ export default function AddCheckLearningExamPage() {
     try {
       const payload = {
         category_id: category_id,
-        question_text: question,
-        correct_option: correctOption,
-        choices: [
-          {'id': 'choice-a', 'answer_text': choice1},
-          {'id': 'choice-b', 'answer_text': choice2},
-          {'id': 'choice-c', 'answer_text': choice3},
-          {'id': 'choice-d', 'answer_text': choice4}
-        ]
+        question_text: question
       };
 
-      await postQuestion(JSON.stringify(payload));
+      await postSurveyQuestion(JSON.stringify(payload));
 
-      setModalMessage("Question saved successfully!");
+      setModalMessage("Survey question saved successfully!");
       setModalSuccess(true);
       setModalOpen(true);
       setLoading(false);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       console.error(err);
-      setModalMessage("Failed to save question.");
+      setModalMessage("Failed to save survey question.");
       setModalSuccess(false);
       setModalOpen(true);
     }
@@ -69,7 +58,7 @@ export default function AddCheckLearningExamPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Check Learning - Exam - {category?.name}</h1>
+      <h1 className="text-2xl font-bold mb-6">Check Learning - Survey - {category?.name}</h1>
       <section>
         <form
           onSubmit={handleSubmit}
@@ -86,64 +75,6 @@ export default function AddCheckLearningExamPage() {
               required
               className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Choice 1</label>
-            <input
-              type="text"
-              value={choice1}
-              onChange={e => setChoice1(e.target.value)}
-              required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Choice 2</label>
-            <input
-              type="text"
-              value={choice2}
-              onChange={e => setChoice2(e.target.value)}
-              required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Choice 3</label>
-            <input
-              type="text"
-              value={choice3}
-              onChange={e => setChoice3(e.target.value)}
-              required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Choice 4</label>
-            <input
-              type="text"
-              value={choice4}
-              onChange={e => setChoice4(e.target.value)}
-              required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Correct Answer</label>
-            <select
-              value={correctOption}
-              onChange={e => setCorrectOption(e.target.value)}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:outline-none focus:ring focus:border-blue-300"
-            >
-              <option value="choice-a">Choice A</option>
-              <option value="choice-b">Choice B</option>
-              <option value="choice-c">Choice C</option>
-              <option value="choice-d">Choice D</option>
-            </select>
           </div>
 
           <div className="flex justify-between">

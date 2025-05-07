@@ -5,19 +5,17 @@ import { useParams, useRouter } from "next/navigation";
 import Table, { Column } from "@/components/table";
 import { Category, fetchCategory } from "@/services/categoryService"; // adjust path as needed
 import ConfirmDeleteModal from "@/components/confirmDeleteModal";
-import { deleteQuestion, fetchQuestions, FlatQuestion, Question } from "@/services/questionService";
+import { deleteSurveyQuestion, fetchSurveyQuestions, Survey } from "@/services/surveyService";
 
-const columns: Column<FlatQuestion>[] = [
-  { header: "Question", accessor: "question_text" },
-  { header: "Choices", accessor: "choices" },
-  { header: "Answer", accessor: "correct_option" },
+const columns: Column<Survey>[] = [
+  { header: "Survey Question", accessor: "question_text" }
 ];
 
-export default function CheckLearningExamPage() {
+export default function CheckLearningSurveyPage() {
   const { category_id } = useParams<{ category_id: string }>();
 
   const [category, setCategory] = useState<Category>();
-  const [data, setData] = useState<Question[]>([]);
+  const [data, setData] = useState<Survey[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [idToDelete, setIdToDelete] = useState<string | null>(null);
@@ -29,13 +27,13 @@ export default function CheckLearningExamPage() {
       .then(setCategory)
       .catch((err: { message: SetStateAction<string | null>; }) => setError(err.message));
 
-    fetchQuestions(category_id)
+    fetchSurveyQuestions(category_id)
       .then(setData)
       .catch((err: { message: SetStateAction<string | null>; }) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleEdit = (question: FlatQuestion) => {
+  const handleEdit = (question: Survey) => {
     console.log("Edit:", question);
     // Add logic here
   };
@@ -48,7 +46,7 @@ export default function CheckLearningExamPage() {
     if (!idToDelete) return;
 
     try {
-      await deleteQuestion(idToDelete);
+      await deleteSurveyQuestion(idToDelete);
       setData(prev => prev.filter(question => question.id !== idToDelete));
       setIdToDelete(null);
     } catch (error) {
@@ -57,17 +55,8 @@ export default function CheckLearningExamPage() {
     }
   };
 
-  const transformQuestions = (data: Question[]): FlatQuestion[] => {
-    return data.map(q => ({
-      id: q.id,
-      choices: q.choices.map(c => c.answer_text).join(", "),
-      correct_option: q.choices.find(c => c.id === q.correct_option)?.answer_text || "",
-      question_text: q.question_text
-    }));
-  };
-
   const handleAddNewQuestion = () => {
-    router.push(`/dashboard/check_learning/exam/${category?.id}/add`)
+    router.push(`/dashboard/check_learning/survey/${category?.id}/add`)
   }
 
   if (loading) return <p>Loading...</p>;
@@ -75,20 +64,20 @@ export default function CheckLearningExamPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Check Learning - Exam - {category?.name}</h1>
+      <h1 className="text-2xl font-bold mb-6">Check Learning - Survey - {category?.name}</h1>
       {/* Button at the top */}
       <div className="mb-4">
         <button
           onClick={handleAddNewQuestion}
           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mb-6"
         >
-          Add Exam Question
+          Add Survey Question
         </button>
       </div>
       <Table
         disablePagination={true}
         columns={columns}
-        data={transformQuestions(data)}
+        data={data}
         getRowKey={(row) => row.id}
         rowsPerPage={5}
         renderActions={(row) => (
