@@ -28,7 +28,6 @@ export async function fetchQuestions(category_id: string): Promise<Question[]> {
 }
 
 export async function postQuestion(payload: string) {
-  console.log(payload)
   const API_URL = process.env.NEXT_PUBLIC_API_URL
 
   const res = await fetch(
@@ -41,7 +40,6 @@ export async function postQuestion(payload: string) {
       body: payload
     }
   )
-  console.log(res)
   if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 }
 
