@@ -5,7 +5,9 @@ import Link from "next/link";
 const navItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/dashboard/article", label: "Article" },
-  { href: "/dashboard/check_learning", label: "Check Learning" }
+  { href: "/dashboard/lesson", label: "Lesson" },
+  { href: "/dashboard/check_learning", label: "Check Learning" },
+  { href: "/dashboard/worksheet", label: "Worksheet" }
 ]
 
 export default function Sidebar() {
