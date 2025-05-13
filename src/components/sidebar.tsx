@@ -7,7 +7,8 @@ const navItems = [
   { href: "/dashboard/article", label: "Article" },
   { href: "/dashboard/lesson", label: "Lesson" },
   { href: "/dashboard/check_learning", label: "Check Learning" },
-  { href: "/dashboard/worksheet", label: "Worksheet" }
+  { href: "/dashboard/worksheet", label: "Worksheet" },
+  { href: "/dashboard/video", label: "Video" }
 ]
 
 export default function Sidebar() {
