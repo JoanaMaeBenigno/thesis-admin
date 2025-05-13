@@ -62,6 +62,34 @@ export async function postLesson(payload: string) {
   if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 }
 
+// Videos
+export async function fetchVideos(): Promise<File[]> {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
+
+  const res = await fetch(`${API_URL}/file/video`)
+  if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+  const json = await res.json()
+
+  return json.data || []
+}
+
+export async function postVideo(payload: string) {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL
+
+  const res = await fetch(
+    `${API_URL}/file/video`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: payload
+    }
+  )
+
+  if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+}
+
 // Common
 export async function deleteFile(id: string) {
   const API_URL = process.env.NEXT_PUBLIC_API_URL
